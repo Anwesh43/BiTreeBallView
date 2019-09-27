@@ -208,4 +208,13 @@ class BiTreeBallView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : BiTreeBallView {
+            val view : BiTreeBallView = BiTreeBallView(activity)
+            activity.setContentView(view)
+            return view 
+        }
+    }
 }
