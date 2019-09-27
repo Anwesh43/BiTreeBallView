@@ -33,10 +33,15 @@ fun Canvas.drawBallLine(i : Int, j : Int, scale : Float, paint : Paint) {
     paint.strokeCap = Paint.Cap.ROUND
     paint.strokeWidth = gap() / strokeFactor
     val size : Float = gap() / sizeFactor
+    val sc1 : Float = scale.divideScale(0, 2)
+    val sc2 : Float = scale.divideScale(1, 2)
     save()
+    paint.style = Paint.Style.STROKE
     drawCircle(0f, 0f, size, paint)
-    drawLine(0f, 0f, (i + 1) * gap(), 0f, paint)
-    drawLine(0f, 0f, 0f, (i + 1) * gap(), paint)
+    paint.style = Paint.Style.FILL
+    drawCircle(0f, 0f, size * sc1, paint)
+    drawLine(0f, 0f, (i + 1) * gap() * sc2, 0f, paint)
+    drawLine(0f, 0f, 0f, (i + 1) * gap() * sc2, paint)
     restore()
 }
 
