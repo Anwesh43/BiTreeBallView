@@ -185,4 +185,26 @@ class BiTreeBallView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    data class Renderer(var view : BiTreeBallView) {
+
+        private val animator : Animator = Animator(view)
+        private val bbt : BiBallTree = BiBallTree(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            bbt.draw(canvas, paint)
+            animator.animate {
+                bbt.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            bbt.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
