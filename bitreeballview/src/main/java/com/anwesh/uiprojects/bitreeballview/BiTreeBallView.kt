@@ -28,7 +28,7 @@ fun Canvas.gap() : Float {
     val h : Float = height.toFloat()
     return Math.min(w, h) / (levels + 1)
 }
-fun Canvas.drawBallLine(i : Int, j : Int, scale : Float, paint : Paint) {
+fun Canvas.drawBallLine(i : Int, j : Int, x : Float, y : Float, scale : Float, paint : Paint) {
     paint.color = foreColor
     paint.strokeCap = Paint.Cap.ROUND
     paint.strokeWidth = gap() / strokeFactor
@@ -36,6 +36,7 @@ fun Canvas.drawBallLine(i : Int, j : Int, scale : Float, paint : Paint) {
     val sc1 : Float = scale.divideScale(0, 2)
     val sc2 : Float = scale.divideScale(1, 2)
     save()
+    translate(x, y)
     paint.style = Paint.Style.STROKE
     drawCircle(0f, 0f, size, paint)
     paint.style = Paint.Style.FILL
@@ -108,5 +109,42 @@ class BiTreeBallView(ctx : Context) : View(ctx) {
                 animated = false
             }
         }
+    }
+
+    data class BTBNode(var i : Int, var j : Int, val state : State = State()) {
+
+        private var right : BTBNode? = null
+        private var down : BTBNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < levels) {
+                right = BTBNode(i + 1, j)
+                down = BTBNode(i, j + 1)
+            }
+        }
+
+        fun draw(canvas : Canvas, x : Float, y : Float, paint : Paint) {
+            canvas.drawBallLine(i, j, x, y, state.scale, paint)
+            val gap : Float = canvas.gap()
+            val sc : Float = state.scale.divideScale(1, 2)
+            right?.draw(canvas, x + gap * sc, y, paint)
+            down?.draw(canvas, x, y + gap * sc, paint)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            state.update(cb)
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getRight() : BTBNode? = right
+
+        fun getDown() : BTBNode? = down
     }
 }
