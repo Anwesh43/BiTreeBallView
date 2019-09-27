@@ -147,4 +147,42 @@ class BiTreeBallView(ctx : Context) : View(ctx) {
 
         fun getDown() : BTBNode? = down
     }
+
+    data class BiBallTree(var i : Int) {
+
+        private val root : BTBNode = BTBNode(0, 0)
+        private val nodes : ArrayList<BTBNode> = ArrayList()
+        init {
+            nodes.add(root)
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            root.draw(canvas, canvas.gap(), canvas.gap(), paint)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            val animNodes : ArrayList<BTBNode> = ArrayList()
+            animNodes.addAll(nodes)
+            animNodes.forEach { node ->
+                node.update {
+                    nodes.remove(node)
+                    if (nodes.size == 0) {
+                        cb(it)
+                    }
+                }
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            var k : Int = 0
+            nodes.forEach { node ->
+                node.startUpdating {
+                    k++
+                    if (k == nodes.size) {
+                        cb()
+                    }
+                }
+            }
+        }
+    }
 }
