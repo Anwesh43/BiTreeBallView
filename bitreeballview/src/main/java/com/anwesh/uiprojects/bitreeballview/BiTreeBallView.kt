@@ -214,7 +214,7 @@ class BiTreeBallView(ctx : Context) : View(ctx) {
         fun create(activity : Activity) : BiTreeBallView {
             val view : BiTreeBallView = BiTreeBallView(activity)
             activity.setContentView(view)
-            return view 
+            return view
         }
     }
 }
