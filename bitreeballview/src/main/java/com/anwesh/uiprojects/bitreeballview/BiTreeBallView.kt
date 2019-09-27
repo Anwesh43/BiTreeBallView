@@ -11,7 +11,7 @@ import android.view.MotionEvent
 import android.content.Context
 import android.app.Activity
 
-val levels : Int = 3
+val levels : Int = 5
 val scGap : Float = 0.05f
 val strokeFactor : Float = 90f /(levels + 1)
 val sizeFactor : Float = 3f
@@ -41,8 +41,12 @@ fun Canvas.drawBallLine(i : Int, j : Int, x : Float, y : Float, scale : Float, p
     drawCircle(0f, 0f, size, paint)
     paint.style = Paint.Style.FILL
     drawCircle(0f, 0f, size * sc1, paint)
-    drawLine(0f, 0f, (i + 1) * gap() * sc2, 0f, paint)
-    drawLine(0f, 0f, 0f, (i + 1) * gap() * sc2, paint)
+    if (i < levels - 1) {
+        drawLine(0f, 0f, gap() * sc2, 0f, paint)
+    }
+    if (j < levels - 1) {
+        drawLine(0f, 0f, 0f,  gap() * sc2, paint)
+    }
     restore()
 }
 
@@ -122,8 +126,10 @@ class BiTreeBallView(ctx : Context) : View(ctx) {
         }
 
         fun addNeighbor() {
-            if (i < levels) {
+            if (i < levels - 1) {
                 right = BTBNode(i + 1, j)
+            }
+            if (j < levels - 1) {
                 down = BTBNode(i, j + 1)
             }
         }
@@ -153,6 +159,7 @@ class BiTreeBallView(ctx : Context) : View(ctx) {
 
         private val root : BTBNode = BTBNode(0, 0)
         private val nodes : ArrayList<BTBNode> = ArrayList()
+        private val childNodes : ArrayList<BTBNode> = ArrayList()
         init {
             nodes.add(root)
         }
@@ -167,8 +174,18 @@ class BiTreeBallView(ctx : Context) : View(ctx) {
             animNodes.forEach { node ->
                 node.update {
                     nodes.remove(node)
+                    val right : BTBNode? = node.getRight()
+                    val down : BTBNode? = node.getDown()
+                    if (right != null) {
+                        childNodes.add(right)
+                    }
+                    if (down != null) {
+                        childNodes.add(down)
+                    }
                     if (nodes.size == 0) {
                         cb(it)
+                        nodes.addAll(childNodes)
+                        childNodes.clear()
                     }
                 }
             }
